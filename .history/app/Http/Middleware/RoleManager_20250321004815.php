@@ -36,7 +36,7 @@ class RoleManager
     {
         $routes = [
             'superadmin' => 'userdashboard',  
-            'admin'      => 'userdashboard',
+            'admin'      => 'dashboard',
             'vendor'     => 'vendor',
             'user'   => 'userdashboard', // Ensure correct role name here
         ];

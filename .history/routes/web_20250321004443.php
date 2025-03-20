@@ -59,9 +59,9 @@ Route::get('/', function () {
     return redirect()->route('login');
 });
 
-Route::get('/userdashboard', function () {
-    return view('userdashboard');
-})->middleware(['auth', 'verified', 'rolemanager:admin,superadmin'])->name('userdashboard');
+Route::get('/dashboard', function () {
+    return view('dashboard');
+})->middleware(['auth', 'verified', 'rolemanager:admin,superadmin'])->name('dashboard');
 
 Route::get('/vendor/dashboard', function () {
     return view('vendor');

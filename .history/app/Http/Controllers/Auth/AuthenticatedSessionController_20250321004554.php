@@ -30,9 +30,9 @@ class AuthenticatedSessionController extends Controller
         $authUserRole = Auth::user()->getRoleNames()->first(); // Fetch the first role of the user
     
         if ($authUserRole === 'superadmin') {  
-            return redirect()->intended(route('userdashboard', absolute: false)); // Fix: Redirect to dashboard
+            return redirect()->intended(route('dashboard', absolute: false)); // Fix: Redirect to dashboard
         } elseif ($authUserRole === 'admin') {  
-            return redirect()->intended(route('userdashboard', absolute: false));
+            return redirect()->intended(route('dashboard', absolute: false));
         } elseif ($authUserRole === 'vendor') {  
             return redirect()->intended(route('vendor', absolute: false));
         } elseif ($authUserRole === 'user') {  // Fix: Use "customer" instead of "user"

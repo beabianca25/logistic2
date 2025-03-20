@@ -151,10 +151,7 @@ public function publicShow()
 public function reservation(){
     $reservation = VehicleReservation::all();
 
-    return response()->json([
-        'message' => 'Users retrieved successfully',
-        'data' => $reservation
-    ], 200);
+    return $reservation;
 }
 
 
