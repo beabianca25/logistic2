@@ -1,0 +1,182 @@
+@extends('base')
+
+@section('content')
+    <nav aria-label="breadcrumb" style="font-size: 0.9rem; font-family: sans-serif;">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{{ url('/vendor') }}">Vendor Portal</a></li>
+            <li class="breadcrumb-item"><a href="{{ url('/auction') }}">Auction</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Auction Details</li>
+        </ol>
+    </nav>
+
+    <!-- Toast Notifications -->
+    <div class="position-fixed top-0 end-0 p-3" style="z-index: 1050">
+        @if (session('bid_success'))
+            <div id="successToast" class="toast align-items-center text-bg-success border-0" role="alert" aria-live="assertive" aria-atomic="true">
+                <div class="d-flex">
+                    <div class="toast-body">
+                        {{ session('bid_success') }}
+                    </div>
+                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+                </div>
+            </div>
+        @endif
+
+        @if (session('bid_error'))
+            <div id="errorToast" class="toast align-items-center text-bg-danger border-0" role="alert" aria-live="assertive" aria-atomic="true">
+                <div class="d-flex">
+                    <div class="toast-body">
+                        {{ session('bid_error') }}
+                    </div>
+                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+                </div>
+            </div>
+        @endif
+    </div>
+
+    <div class="container">
+        <div class="row">
+            <div class="card-header">
+                <h4>Auction Details
+                    <a href="{{ route('auction.index') }}" class="btn btn-danger float-end">Back</a>
+                </h4>
+            </div>
+
+            <!-- Image Section -->
+            <div class="col-md-6">
+                <div class="main-image">
+                    @if ($auction->photo)
+                        <img src="{{ asset('storage/' . $auction->photo) }}" alt="Auction Photo"
+                            style="width:100%; max-width: 500px;">
+                    @else
+                        <p>No photo available</p>
+                    @endif
+                </div>
+                <!-- Thumbnail Images (if multiple images are available) -->
+                <div class="thumbnail-images mt-3">
+                    <img src="{{ asset('storage/' . $auction->photo) }}" alt="Thumbnail" class="img-thumbnail"
+                        style="width: 75px; margin-right: 5px;">
+                </div>
+            </div>
+
+            <!-- Details Section -->
+            <div class="col-md-6">
+                <h1 style="font-family: sans-serif; font-size: 1.5rem;">{{ $auction->title }}</h1>
+                <p class="text-muted">{{ $auction->short_description }}</p>
+
+                <div class="auction-details mt-8" style="font-size: 40; font-family: sans-serif;">
+                    <div><strong>Category:</strong> {{ $auction->category }}</div>
+                    <div><strong>Year:</strong> {{ $auction->year }}</div>
+                    <div><strong>Description:</strong> {{ $auction->description }}</div>
+                    <div><strong>Condition:</strong> {{ $auction->condition }}</div>
+                    <div><strong>Product Version:</strong> {{ $auction->product_version }}</div>
+                    <div><strong>Company:</strong> {{ $auction->company }}</div>
+                    <div><strong>Pricing</strong>
+                        <div><strong>Minimum Estimate Price:</strong> ₱{{ $auction->min_estimate_price }}</div>
+                        <div><strong>End Date:</strong> {{ $auction->end_date }}</div>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="mt-4">
+
+                        @if (!isset($bid))
+                            <!-- Check if the user hasn't placed a bid -->
+                            <form action="{{ route('bid.store', ['auctionId' => $auction->id]) }}" method="POST">
+                                @csrf
+                                <div class="form-group">
+                                    <label for="bid_amount">Bid Amount</label>
+                                    <input type="number" name="bid_amount" id="bid_amount" class="form-control" required placeholder="Enter your bid" min="{{ number_format($auction->min_estimate_price, 2) }}">
+                                </div>
+                            
+                                @guest
+                                    <div class="form-group">
+                                        <label for="guest_name">Your Name</label>
+                                        <input type="text" name="guest_name" id="guest_name" class="form-control" required placeholder="Enter your name">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="guest_email">Your Email</label>
+                                        <input type="email" name="guest_email" id="guest_email" class="form-control" required placeholder="Enter your email">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="guest_phone">Your Phone</label>
+                                        <input type="text" name="guest_phone" id="guest_phone" class="form-control" required placeholder="Enter your phone number">
+                                    </div>
+                                @endguest
+                            
+                                <button type="submit" class="btn btn-success mt-3">Place Bid</button>
+                            </form>
+                            
+                            
+                        @else
+                            <div class="alert alert bg-maroon">
+                                You have already placed a bid of {{ number_format($bid->bid_amount, 2) }}. Thank you for
+                                participating!
+                            </div>
+                        @endif
+                    </div>
+
+                    <!-- Social Media Links (optional) -->
+                    <div class="mt-3">
+                        <a href="#"><i class="fab fa-facebook-square"></i></a>
+                        <a href="#"><i class="fab fa-twitter-square"></i></a>
+                        <a href="#"><i class="fab fa-instagram-square"></i></a>
+                        <a href="#"><i class="fab fa-pinterest-square"></i></a>
+                        <a href="#"><i class="fab fa-envelope-square"></i></a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tabs for Description, Comments, and Rating -->
+            <div class="mt-5">
+                <ul class="nav nav-tabs">
+                    <li class="nav-item">
+                        <a class="nav-link active" data-toggle="tab" href="#description">Description</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" data-toggle="tab" href="#comments">Comments</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" data-toggle="tab" href="#rating">Rating</a>
+                    </li>
+                </ul>
+
+                <div class="tab-content mt-3">
+                    <div id="description" class="tab-pane fade show active">
+                        <p>{{ $auction->description }}</p>
+                    </div>
+                    <div id="comments" class="tab-pane fade">
+                        <p>No comments available.</p>
+                    </div>
+                    <div id="rating" class="tab-pane fade">
+                        <p>No ratings available.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+    // Show success toast
+    var successToastEl = document.getElementById('successToast');
+    if (successToastEl) {
+        var toast = new bootstrap.Toast(successToastEl, {
+            autohide: true, // Automatically hide the toast
+            delay: 10000    // Set duration to 10 seconds (10000ms)
+        });
+        toast.show();
+    }
+
+    // Show error toast
+    var errorToastEl = document.getElementById('errorToast');
+    if (errorToastEl) {
+        var toast = new bootstrap.Toast(errorToastEl, {
+            autohide: true,
+            delay: 10000
+        });
+        toast.show();
+    }
+});
+
+    </script>
+@endsection

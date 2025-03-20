@@ -17,6 +17,11 @@
         "vite": "^5.0"
     },
     "dependencies": {
-        "sweetalert2": "^11.6.13"
+        "fullcalendar": "^6.1.15",
+        "laravel-echo": "^2.0.2",
+        "leaflet": "^1.9.4",
+        "pusher-js": "^8.4.0",
+        "sweetalert2": "^11.6.13",
+        "uuid": "^11.1.0"
     }
 }
