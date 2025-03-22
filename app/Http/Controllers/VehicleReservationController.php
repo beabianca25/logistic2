@@ -7,6 +7,7 @@ use App\Models\ReservationVehicle;
 use App\Models\Vehicle;
 use App\Models\VehicleReservation;
 use Carbon\Carbon;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Log;
@@ -150,12 +151,16 @@ public function publicShow()
 
 public function reservation()
 {
-    $reservations = VehicleReservation::paginate(10); // 10 per page
+    try {
+        $reservations = VehicleReservation::paginate(10); // 10 per page
 
     return response()->json([
         'message' => 'Reservations retrieved successfully',
         'data' => $reservations
     ], 200);
+    } catch (Exception $e) {
+        echo $e->getMessage();
+    }
 }
 
 
